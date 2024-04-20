@@ -32,4 +32,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return UsuarioMapper.mapToUsuarioDto(usuario);
     }
+
+    //preciso ver se esta conectado
 }
