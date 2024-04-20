@@ -9,6 +9,9 @@ import net.meuamigoviajante.meuAmigoViajante.repository.UsuarioRepository;
 import net.meuamigoviajante.meuAmigoViajante.service.UsuarioService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
@@ -33,5 +36,39 @@ public class UsuarioServiceImpl implements UsuarioService {
         return UsuarioMapper.mapToUsuarioDto(usuario);
     }
 
-    //preciso ver se esta conectado
+    @Override
+    public List<UsuarioDto> getAllUsuarios() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        return usuarios.stream().map((usuario) -> UsuarioMapper.mapToUsuarioDto(usuario))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UsuarioDto updateUsuario(Long usuarioId, UsuarioDto updatedUsuario) {
+
+       Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
+                ()-> new ResourceNotFoundException("Nenhum usuario encontrado com esse id: " + usuarioId)
+        );
+
+       usuario.setFirstName(updatedUsuario.getFirstName());
+       usuario.setLastName(updatedUsuario.getLastName());
+       usuario.setEmail(updatedUsuario.getEmail());
+
+       Usuario updateUsuarioObj =  usuarioRepository.save(usuario);
+
+        return UsuarioMapper.mapToUsuarioDto(updateUsuarioObj) ;
+    }
+
+    @Override
+    public void deleteUsuario(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
+                ()-> new ResourceNotFoundException("Nenhum usuario encontrado com esse id: " + usuarioId)
+        );
+
+
+    usuarioRepository.deleteById(usuarioId);
+    }
+
+
 }
